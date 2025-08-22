@@ -1,0 +1,153 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.1
+    paths:
+      - 'Main.cs'  # Also triggers when Main.cs is modified (version changes)
+  workflow_dispatch:  # Allows manual trigger from GitHub web interface
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Extract version
+      id: get_version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          # If triggered by tag
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        else
+          # If triggered by file change or manual, extract version from Main.cs
+          VERSION=$(grep -o 'ModuleVersion => "[^"]*"' Main.cs | sed 's/ModuleVersion => "//; s/"//')
+          echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
+        fi
+      
+    - name: Restore dependencies
+      run: dotnet restore SimpleDiscordRelay.csproj
+      
+    - name: Build project
+      run: dotnet build SimpleDiscordRelay.csproj --configuration Release --no-restore
+      
+    - name: Publish project
+      run: dotnet publish SimpleDiscordRelay.csproj --configuration Release --output ./publish --no-build
+      
+    - name: Create release directory structure
+      run: |
+        mkdir -p release/addons/counterstrikesharp/plugins/SimpleDiscordRelay
+        mkdir -p release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP
+        
+    - name: Copy built files to release structure
+      run: |
+        # Copy main plugin DLL
+        cp ./publish/SimpleDiscordRelay.dll release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
+        
+        # Copy only required dependencies (exclude system/framework DLLs)
+        REQUIRED_DEPS=(
+          "Discord.Net.Core.dll"
+          "Discord.Net.Rest.dll"
+          "Discord.Net.WebSocket.dll"
+          "Discord.Net.Commands.dll"
+          "Newtonsoft.Json.dll"
+          "MaxMind.GeoIP2.dll"
+          "MaxMind.Db.dll"
+        )
+        
+        for dep in "${REQUIRED_DEPS[@]}"; do
+          if [ -f "./publish/$dep" ]; then
+            cp "./publish/$dep" release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
+            echo "Copied: $dep"
+          else
+            echo "Warning: $dep not found"
+          fi
+        done
+        
+        # List what was actually copied for debugging
+        echo "Files copied to release:"
+        ls -la release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
+        
+        # Copy GeoIP database if exists
+        if [ -f "./GeoIP/GeoLite2-Country.mmdb" ]; then
+          cp ./GeoIP/GeoLite2-Country.mmdb release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
+        else
+          echo "Note: GeoLite2-Country.mmdb not found - users will need to download it separately"
+        fi
+        
+        # Copy README
+        cp README.md release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
+        
+    - name: Create installation instructions
+      run: |
+        cat > release/INSTALLATION.txt << 'EOF'
+        SimpleDiscordRelay Installation Instructions
+        ==========================================
+        
+        1. Extract this archive to your CS2 server root directory
+        2. The files will be placed in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/
+        3. Download GeoLite2-Country.mmdb from MaxMind and place it in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
+        4. Restart your server or use 'css_plugins load SimpleDiscordRelay'
+        5. Configure the plugin by editing: addons/counterstrikesharp/configs/plugins/SimpleDiscordRelay/simplediscordrelay.json
+        
+        For detailed setup instructions, see README.md
+        EOF
+        
+    - name: Create archive
+      run: |
+        cd release
+        zip -r ../SimpleDiscordRelay-${{ steps.get_version.outputs.VERSION }}.zip .
+        cd ..
+        
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+        if [ -f CHANGELOG.md ]; then
+          # Extract latest version changes from CHANGELOG.md if it exists
+          awk '/^## \[${{ steps.get_version.outputs.VERSION }}\]/{flag=1; next} /^## \[/{flag=0} flag' CHANGELOG.md || echo "## Changes in ${{ steps.get_version.outputs.VERSION }}"
+        else
+          echo "## Changes in ${{ steps.get_version.outputs.VERSION }}"
+          echo ""
+          echo "- Plugin release ${{ steps.get_version.outputs.VERSION }}"
+        fi
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        name: SimpleDiscordRelay ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          # SimpleDiscordRelay ${{ steps.get_version.outputs.VERSION }}
+          
+          ## Installation
+          1. Download the `SimpleDiscordRelay-${{ steps.get_version.outputs.VERSION }}.zip` file
+          2. Extract it to your CS2 server root directory
+          3. Download GeoLite2-Country.mmdb from MaxMind and place it in the GeoIP folder
+          4. Configure your Discord bot token in the config file
+          5. Restart your server
+          
+          ## What's Changed
+          ${{ steps.changelog.outputs.CHANGELOG }}
+          
+          ## Requirements
+          - CounterStrikeSharp
+          - .NET 8.0 Runtime
+          - Discord Bot Token
+          
+          For detailed setup instructions, see the README.md file included in the archive.
+        files: |
+          SimpleDiscordRelay-${{ steps.get_version.outputs.VERSION }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
