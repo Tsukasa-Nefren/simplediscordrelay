@@ -17,7 +17,7 @@ namespace SimpleDiscordRelay
     public class Main : BasePlugin
     {
         public override string ModuleName => "Simple Discord Relay";
-        public override string ModuleVersion => "0.0.0";
+        public override string ModuleVersion => "1.0.0";
         public override string ModuleAuthor => "Tsukasa";
 
         public static Config SDRConfig { get; private set; } = null!;
