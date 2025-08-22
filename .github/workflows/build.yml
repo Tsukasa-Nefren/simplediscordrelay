@@ -76,11 +76,14 @@ jobs:
         echo "Files copied to release:"
         ls -la release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
         
-        # Copy GeoIP database if exists
-        if [ -f "./GeoIP/GeoLite2-Country.mmdb" ]; then
-          cp ./GeoIP/GeoLite2-Country.mmdb release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
+        # Copy GeoIP folder contents if exists
+        if [ -d "./GeoIP" ]; then
+          echo "Copying GeoIP folder contents..."
+          cp -r ./GeoIP/* release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/ 2>/dev/null || true
+          echo "GeoIP files copied:"
+          ls -la release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
         else
-          echo "Note: GeoLite2-Country.mmdb not found - users will need to download it separately"
+          echo "Note: GeoIP folder not found - users will need to download GeoLite2-Country.mmdb separately"
         fi
         
         # Copy README
@@ -94,9 +97,11 @@ jobs:
         
         1. Extract this archive to your CS2 server root directory
         2. The files will be placed in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/
-        3. Download GeoLite2-Country.mmdb from MaxMind and place it in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
+        3. If GeoLite2-Country.mmdb is not included, download it from MaxMind and place it in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
         4. Restart your server or use 'css_plugins load SimpleDiscordRelay'
         5. Configure the plugin by editing: addons/counterstrikesharp/configs/plugins/SimpleDiscordRelay/simplediscordrelay.json
+        
+        Important: Set your Discord Bot Token in the config file!
         
         For detailed setup instructions, see README.md
         EOF
@@ -132,7 +137,7 @@ jobs:
           ## Installation
           1. Download the `SimpleDiscordRelay-${{ steps.get_version.outputs.VERSION }}.zip` file
           2. Extract it to your CS2 server root directory
-          3. Download GeoLite2-Country.mmdb from MaxMind and place it in the GeoIP folder
+          3. If GeoIP database is not included, download GeoLite2-Country.mmdb from MaxMind
           4. Configure your Discord bot token in the config file
           5. Restart your server
           
