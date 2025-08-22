@@ -3,10 +3,10 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*.*.*'  # Triggers on version tags like v1.0.1
+      - 'v*.*.*'
     paths:
-      - 'Main.cs'  # Also triggers when Main.cs is modified (version changes)
-  workflow_dispatch:  # Allows manual trigger from GitHub web interface
+      - 'Main.cs'
+  workflow_dispatch:
 
 jobs:
   build-and-release:
@@ -86,25 +86,7 @@ jobs:
           echo "Note: GeoIP folder not found - users will need to download GeoLite2-Country.mmdb separately"
         fi
         
-        # Copy README
-        cp README.md release/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
-        
-    - name: Create installation instructions
-      run: |
-        cat > release/INSTALLATION.txt << 'EOF'
-        SimpleDiscordRelay Installation Instructions
-        ==========================================
-        
-        1. Extract this archive to your CS2 server root directory
-        2. The files will be placed in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/
-        3. If GeoLite2-Country.mmdb is not included, download it from MaxMind and place it in: addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/
-        4. Restart your server or use 'css_plugins load SimpleDiscordRelay'
-        5. Configure the plugin by editing: addons/counterstrikesharp/configs/plugins/SimpleDiscordRelay/simplediscordrelay.json
-        
-        Important: Set your Discord Bot Token in the config file!
-        
-        For detailed setup instructions, see README.md
-        EOF
+
         
     - name: Create archive
       run: |
