@@ -1,4 +1,12 @@
-# SimpleDiscordRelay
+## 📦 Quick Start
+
+1. **Download**: Get the latest release from the [Releases](../../releases) page
+2. **Extract**: Unzip to your CS2 server root directory  
+3. **Configure**: Edit the config file with your Discord bot token and channel IDs
+4. **Restart**: Restart your server or reload the plugin
+5. **Enjoy**: Your Discord and CS2 server are now connected!
+
+---# SimpleDiscordRelay
 
 A Counter-Strike 2 plugin that provides seamless integration between your CS2 server and Discord using CounterStrikeSharp.
 
@@ -34,20 +42,17 @@ A Counter-Strike 2 plugin that provides seamless integration between your CS2 se
 - Discord bot with proper permissions (Send Messages, Embed Links, Read Message History)
 
 ### Installation
-1. Download the plugin files
-2. Place them in your CounterStrikeSharp plugins directory:
+1. Download the latest release zip file from the [Releases](../../releases) page
+2. Extract the zip file to your CS2 server root directory
+3. If GeoLite2-Country.mmdb is not included, download it from [MaxMind](https://www.maxmind.com/en/open-source-data-and-api-for-ip-geolocation) and place it in:
    ```
-   csgo/addons/counterstrikesharp/plugins/SimpleDiscordRelay/
-   ```
-3. Download GeoLite2-Country.mmdb from [MaxMind](https://www.maxmind.com/en/open-source-data-and-api-for-ip-geolocation) and place it in:
-   ```
-   plugins/SimpleDiscordRelay/GeoIP/GeoLite2-Country.mmdb
+   addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/GeoLite2-Country.mmdb
    ```
 
 ### Configuration
-The plugin will automatically generate a configuration file on first run:
+The plugin will automatically generate a configuration file on first run at:
 ```
-csgo/addons/counterstrikesharp/configs/plugins/SimpleDiscordRelay/simplediscordrelay.json
+addons/counterstrikesharp/configs/plugins/SimpleDiscordRelay/simplediscordrelay.json
 ```
 
 #### Essential Settings
