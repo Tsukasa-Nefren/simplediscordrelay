@@ -6,7 +6,7 @@
 4. **Restart**: Restart your server or reload the plugin
 5. **Enjoy**: Your Discord and CS2 server are now connected!
 
----# SimpleDiscordRelay
+## SimpleDiscordRelay
 
 A Counter-Strike 2 plugin that provides seamless integration between your CS2 server and Discord using CounterStrikeSharp.
 
@@ -48,7 +48,7 @@ A Counter-Strike 2 plugin that provides seamless integration between your CS2 se
    ```
    addons/counterstrikesharp/plugins/SimpleDiscordRelay/GeoIP/GeoLite2-Country.mmdb
    ```
-
+I highly recommend installing this plugin: [CS2FlashingHtmlHudFix](https://github.com/girlglock/CS2FlashingHtmlHudFix)
 ### Configuration
 The plugin will automatically generate a configuration file on first run at:
 ```
