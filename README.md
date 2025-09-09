@@ -1,16 +1,8 @@
-## 📦 Quick Start
-
-1. **Download**: Get the latest release from the [Releases](../../releases) page
-2. **Extract**: Unzip to your CS2 server root directory  
-3. **Configure**: Edit the config file with your Discord bot token and channel IDs
-4. **Restart**: Restart your server or reload the plugin
-5. **Enjoy**: Your Discord and CS2 server are now connected!
-
 ## SimpleDiscordRelay
 
 A Counter-Strike 2 plugin that provides seamless integration between your CS2 server and Discord using CounterStrikeSharp.
 
-## 🚀 Features
+## Features
 
 ### Chat Relay
 - **Bidirectional Chat**: Real-time synchronization between in-game chat and Discord channels
@@ -75,7 +67,7 @@ addons/counterstrikesharp/configs/plugins/SimpleDiscordRelay/simplediscordrelay.
    - Read Message History
    - Use External Emojis
 
-## 🎨 Customization
+## Customization
 
 ### Message Formats
 Customize how messages appear in both Discord and in-game:
@@ -110,13 +102,13 @@ Customize embed colors for different message types:
 - `Chat Embed Color`: Chat messages (default: light blue)
 - `Map Change Embed Color`: Map change notifications (default: blue)
 
-## 📋 Commands
+## Commands
 
 The plugin automatically hooks into CS2 chat commands:
 - `say` - Public chat (relayed to Discord)
 - `say_team` - Team chat (relayed to Discord with team prefix)
 
-## 🔧 Technical Details
+## Technical Details
 
 - **Framework**: .NET 8.0
 - **Dependencies**: 
@@ -126,24 +118,13 @@ The plugin automatically hooks into CS2 chat commands:
 - **Rate Limiting**: Built-in message queue with 300ms delays
 - **Error Handling**: Comprehensive exception handling and logging
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 1. **Bot not responding**: Check if the bot token is correct and the bot is online
 2. **Messages not relaying**: Verify channel IDs and bot permissions
 3. **GeoIP not working**: Ensure GeoLite2-Country.mmdb is in the correct location
 4. **HUD messages not showing**: Check if `Enable Hud Message For Emoji` is enabled
-
-### Logs
-Check the server console for detailed error messages prefixed with `[SDR]` or `[Discord]`.
-
-## 📝 License
-
-This project is open source. Please check the repository for license details.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
 
 ---
 
