@@ -112,8 +112,8 @@ The plugin automatically hooks into CS2 chat commands:
 
 - **Framework**: .NET 8.0
 - **Dependencies**: 
-  - Discord.Net 3.15.3
-  - MaxMind.GeoIP2 5.2.0
+  - Discord.Net 3.18.0
+  - MaxMind.GeoIP2 5.3.0
   - CounterStrikeSharp API
 - **Rate Limiting**: Built-in message queue with 300ms delays
 - **Error Handling**: Comprehensive exception handling and logging
